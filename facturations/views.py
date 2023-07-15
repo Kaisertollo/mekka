@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.generic import ListView, DetailView, View
-from .models import Invoice,InvoiceProduct
+from .models import *
 from .serializers import *
 
 
@@ -15,6 +15,9 @@ class InvoiceListView(ListView):
             invoices = self.get_queryset().filter(customer_id=customer_id)
         else:
             invoices = self.get_queryset()
+            for i in invoices:
+                i.invoice_product = InvoiceProduct.objects.filter(invoice = i)
+                i.calculate_total_amount()
 
         serializer = InvoiceSerializer(invoices, many=True)
         return JsonResponse(serializer.data, safe=False)

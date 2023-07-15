@@ -1,23 +1,31 @@
 from rest_framework import serializers
-from .models import Invoice, Product, InvoiceProduct
-
+from .models import Invoice, Product, InvoiceProduct, Customer
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ('id', 'name')
+        fields = '__all__'
 
 
 class InvoiceProductSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-    class Meta:
+   product = ProductSerializer(read_only=True)
+   
+   class Meta:
         model = InvoiceProduct
-        fields = ('product', 'quantity', 'price')
+        fields = ('id','quantity','product')
+
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
-    products = InvoiceProductSerializer(many=True)
+    customer = serializers.StringRelatedField()
+    invoice_product = InvoiceProductSerializer(many=True)
 
     class Meta:
         model = Invoice
-        fields = ('id', 'number', 'date', 'customer', 'total_amount', 'products')
+        fields = '__all__'
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = '__all__'

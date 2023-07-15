@@ -13,11 +13,14 @@ class InvoiceAdmin(admin.ModelAdmin):
     list_filter = ('customer',)
     search_fields = ('number', 'customer__name')
     inlines = [InvoiceProductInline]
+    def total_amount(self,obj):
+        return obj.calculate_total_amount()
+    
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name','price')
 
 
 admin.site.register(InvoiceProduct)
