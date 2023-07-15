@@ -1,0 +1,25 @@
+# Ignore Django development-related files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore Django media files (uploaded user content)
+media/
+
+# Ignore Django static files (collectstatic command)
+static/
+
+# Ignore local development settings
+settings/local.py
+
+# Ignore database files
+db.sqlite3
+
+# Ignore IDE-specific files (e.g., for Visual Studio Code)
+.vscode/
+
+# Ignore system and temporary files
+*.swp
+*~
+.DS_Store
