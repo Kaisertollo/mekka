@@ -2,8 +2,9 @@ from django.http import JsonResponse
 from django.views.generic import ListView, DetailView, View
 from .models import *
 from .serializers import *
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 class InvoiceListView(ListView):
     model = Invoice
     template_name = 'invoices/invoice_list.html'  # Replace with your template path
@@ -22,7 +23,7 @@ class InvoiceListView(ListView):
         serializer = InvoiceSerializer(invoices, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-
+from django.views.decorators.csrf import csrf_exempt
 class InvoiceDetailView(DetailView):
     model = Invoice
     template_name = 'invoices/invoice_detail.html'  # Replace with your template path
@@ -33,7 +34,7 @@ class InvoiceDetailView(DetailView):
         serializer = InvoiceSerializer(invoice)
         return JsonResponse(serializer.data)
 
-
+from django.views.decorators.csrf import csrf_exempt
 class InvoiceCreateView(View):
 
     def post(self, request, *args, **kwargs):

@@ -1,11 +1,9 @@
 from django.contrib import admin
 from .models import Invoice, Product, InvoiceProduct,Customer
 
-
 class InvoiceProductInline(admin.TabularInline):
     model = InvoiceProduct
     extra = 1
-
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
