@@ -139,7 +139,7 @@ class AgentAPI(APIView):
 class InvoicePayAPI(APIView):
     def post(self, request):
         id_agent = request.data.get('id')
-        agent = Agent.objects.filter(id = id_agent)
+        agent = Agent.objects.filter(id = id_agent).first()
         id_invoices = request.data.get('invoices',[])
         for id_invoice in id_invoices:
             invoice = Invoice.objects.filter(id=id_invoice).first()
