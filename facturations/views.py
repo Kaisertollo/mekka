@@ -175,6 +175,6 @@ def Send_wp(phone,code):
 
     print(response.text)
 def generate_code():
-    characters = string.ascii_letters + string.digits
+    characters = string.digits
     code = ''.join(random.choice(characters) for _ in range(5))
     return code
