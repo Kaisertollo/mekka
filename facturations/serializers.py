@@ -15,17 +15,17 @@ class InvoiceProductSerializer(serializers.ModelSerializer):
         fields = ('id','quantity','product')
 
 
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+
 
 class InvoiceSerializer(serializers.ModelSerializer):
-    customer = serializers.StringRelatedField()
+    customer = CustomerSerializer()
     invoice_product = InvoiceProductSerializer(many=True)
 
     class Meta:
         model = Invoice
         fields = '__all__'
 
-
-class CustomerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-        fields = '__all__'

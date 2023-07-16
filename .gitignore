@@ -23,3 +23,5 @@ db.sqlite3
 *.swp
 *~
 .DS_Store
+facturations/__pycache__/admin.cpython-310.pyc
+*.pyc
