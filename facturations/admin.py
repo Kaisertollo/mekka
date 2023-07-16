@@ -7,12 +7,12 @@ class InvoiceProductInline(admin.TabularInline):
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ('number', 'date', 'customer', 'total_amount')
+    list_display = ('number', 'date', 'customer', 'total_amount','payed')
     list_filter = ('customer',)
     search_fields = ('number', 'customer__name')
     inlines = [InvoiceProductInline]
     def total_amount(self,obj):
-        return obj.calculate_total_amount()
+        return f"{obj.calculate_total_amount()} $"
     
 
 
@@ -24,3 +24,4 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(InvoiceProduct)
 admin.site.register(Customer)
 admin.site.register(Corporate)
+admin.site.register(Agent)

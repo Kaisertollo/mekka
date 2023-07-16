@@ -5,6 +5,9 @@ class Invoice(models.Model):
     number = models.CharField(max_length=20)
     date = models.DateField()
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    agent = models.ForeignKey('Agent', on_delete=models.CASCADE,null=True,blank=True)
+    corporate = models.ForeignKey('Corporate', on_delete=models.CASCADE,null=True)
+    payed = models.BooleanField(default=False)
     total_amount = 0
     invoice_product = list()
 
@@ -45,6 +48,16 @@ class Corporate(models.Model):
     email = models.EmailField(unique=True)
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=50,unique=True)
+    # Add any other fields you need for the customer model
+
+    def __str__(self):
+        return self.name
+class Agent(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=50,unique=True)
+    code = models.CharField(max_length=10,unique=True)
     # Add any other fields you need for the customer model
 
     def __str__(self):

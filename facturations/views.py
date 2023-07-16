@@ -120,6 +120,33 @@ class CustomerAPI(APIView):
         address = request.data.get('address')
         customer = Customer.objects.create(name=name, email=email, address=address)
         return Response({'id': customer.id, 'name': customer.name, 'email': customer.email,'address': customer.address})
+class AgentAPI(APIView):
+    def get(self, request):
+        agents = Agent.objects.all()
+        # Convert the customer data to JSON or any desired format
+        data = [{'id':agent.id,'name': agent.name, 'email': agent.email, 'address': agent.address,'code': agent.code} for agent in agents]
+        return Response(data)
+
+    def post(self, request):
+        code_agent = request.data.get('code_agent') 
+        agent = Agent.objects.filter(code = code_agent).first()
+        if agent:
+            code_controle = generate_code()
+            Send_wp(agent.phone,code_controle)
+            return Response({'id':agent.id,'code': code_controle,'name':agent.name,'phone':agent.phone,'id':agent.id,'code_agent':code_agent})
+        else:
+            return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id",'code_agent':"code_agent"})
+class InvoicePayAPI(APIView):
+    def post(self, request):
+        id_agent = request.data.get('id')
+        agent = Agent.objects.filter(id = id_agent)
+        id_invoices = request.data.get('invoices',[])
+        for id_invoice in id_invoices:
+            invoice = Invoice.objects.filter(id=id_invoice).first()
+            invoice.payed = True
+            invoice.agent = agent
+            invoice.save()
+        return Response({'etat':"succes"})
 class CustomerApiLogin(APIView):
     def post(self, request):
         p = request.data.get('phone')
@@ -129,7 +156,7 @@ class CustomerApiLogin(APIView):
             Send_wp(p,code)
             return Response({'id':c.id,'code':code})
         else:
-            return Response({'code':0})    
+            return Response({'id':0,'code':0})
         
 
 def Send_wp(phone,code):
