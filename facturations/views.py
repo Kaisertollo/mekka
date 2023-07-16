@@ -22,6 +22,15 @@ class InvoiceListView(ListView):
             i.calculate_total_amount()
         serializer = InvoiceSerializer(invoices, many=True)
         return JsonResponse(serializer.data, safe=False)
+class ProductListView(ListView):
+    model = Product
+    template_name = 'invoices/invoice_list.html'  # Replace with your template path
+    context_object_name = 'invoices'
+
+    def get(self, request, *args, **kwargs):
+        products = self.get_queryset()
+        serializer = ProductSerializer(products, many=True)
+        return JsonResponse(serializer.data, safe=False)
 """     @csrf_exempt
     def post(self, request):
         data = request.POST
@@ -157,6 +166,18 @@ class CustomerApiLogin(APIView):
             return Response({'id':c.id,'code':code})
         else:
             return Response({'id':0,'code':0})
+        
+
+class CorporateApiLogin(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        c = Corporate.objects.filter(phone = p).first()
+        if c:
+            code = generate_code()
+            Send_wp(p,code)
+            return Response({'id':c.id,'code': code,'name':c.name,'phone':c.phone,'id':c.id})
+        else:
+            return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id"})
         
 
 def Send_wp(phone,code):
