@@ -123,7 +123,7 @@ class CustomerAPI(APIView):
 class CustomerApiLogin(APIView):
     def post(self, request):
         p = request.data.get('phone')
-        c = Customer.objects.filter(phone = p)
+        c = Customer.objects.filter(phone = p).first()
         if c:
             code = generate_code()
             Send_wp(p,code)
