@@ -4,9 +4,11 @@ from rest_framework.views import APIView
 from django.views.generic import ListView, DetailView, View
 from .models import *
 from .serializers import *
+import requests
 import json
 from django.views.decorators.csrf import csrf_exempt
-
+import random
+import string
 
 class InvoiceListView(ListView):
     model = Invoice
@@ -118,3 +120,34 @@ class CustomerAPI(APIView):
         address = request.data.get('address')
         customer = Customer.objects.create(name=name, email=email, address=address)
         return Response({'id': customer.id, 'name': customer.name, 'email': customer.email,'address': customer.address})
+class CustomerApiLogin(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        c = Customer.objects.filter(phone = p)
+        if c:
+            code = generate_code()
+            Send_wp(p,code)
+            return Response({'id':c.id,'code':code})
+        else:
+            return Response({'code':0})    
+        
+
+def Send_wp(phone,code):
+    url = "https://api.ultramsg.com/instance46277/messages/chat"
+
+    payload = json.dumps({
+        "token": "ucl1zdrrlnekz30x",
+        "to": phone,
+        "body": f"Votre code de connexion est :{code}"
+    })
+    headers = {
+    'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.text)
+def generate_code():
+    characters = string.ascii_letters + string.digits
+    code = ''.join(random.choice(characters) for _ in range(5))
+    return code

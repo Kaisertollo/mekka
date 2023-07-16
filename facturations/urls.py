@@ -9,4 +9,5 @@ urlpatterns = [
     path('invoicesbyId/<int:pk>/', InvoiceDetailView.as_view(), name='invoice_detail'),
     path('invoices/create/', InvoiceCreateView.as_view(), name='invoice_create'),
     path('api/customers/', CustomerAPI.as_view(), name='customer_api'),
+    path('api/customers/login',CustomerApiLogin.as_view(), name='customer_api_login'),
 ]

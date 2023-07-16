@@ -34,6 +34,17 @@ class Customer(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=50,unique=True)
+    # Add any other fields you need for the customer model
+
+    def __str__(self):
+        return self.name
+
+class Corporate(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=50,unique=True)
     # Add any other fields you need for the customer model
 
     def __str__(self):
