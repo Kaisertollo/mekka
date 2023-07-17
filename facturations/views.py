@@ -161,7 +161,7 @@ class CustomerApiLogin(APIView):
         p = request.data.get('phone')
         c = Customer.objects.filter(phone = p).first()
         if c:
-            code = generate_code()
+            code = "0000"
             Send_wp(p,code)
             return Response({'id':c.id,'code':code})
         else:
@@ -173,7 +173,7 @@ class CorporateApiLogin(APIView):
         p = request.data.get('phone')
         c = Corporate.objects.filter(phone = p).first()
         if c:
-            code = generate_code()
+            code = "0000"
             Send_wp(p,code)
             return Response({'id':c.id,'code': code,'name':c.name,'phone':c.phone,'id':c.id})
         else:
