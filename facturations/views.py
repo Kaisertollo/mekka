@@ -9,7 +9,9 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 import random
 import string
-
+class default(APIView):
+   def get(self, request):
+    return Response("hello Mekka")
 class InvoiceListView(ListView):
     model = Invoice
     template_name = 'invoices/invoice_list.html'  # Replace with your template path
@@ -22,6 +24,19 @@ class InvoiceListView(ListView):
             i.calculate_total_amount()
         serializer = InvoiceSerializer(invoices, many=True)
         return JsonResponse(serializer.data, safe=False)
+class InvoiceListByDate(APIView):
+   def get(self, request):
+        dates = Invoice.objects.values_list('date', flat=True).distinct()
+        list = []
+        for d in dates:
+            inv = Invoice.objects.all().filter(date=d)
+            for i in inv:
+                i.invoice_product = InvoiceProduct.objects.filter(invoice = i)
+                i.calculate_total_amount()
+            s = InvoiceSerializer(inv, many=True)
+            item = {"date": d.isoformat(),"invoices":s.data}
+            list.append(item)
+        return Response(list)
 class ProductListView(ListView):
     model = Product
     template_name = 'invoices/invoice_list.html'  # Replace with your template path
