@@ -25,3 +25,4 @@ db.sqlite3
 .DS_Store
 facturations/__pycache__/admin.cpython-310.pyc
 *.pyc
+db.sqlite3
