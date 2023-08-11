@@ -35,7 +35,7 @@ class CustomerApiLogin(APIView):
         p = request.data.get('phone')
         c = Customer.objects.filter(phone = p).first()
         if c:
-            code = "0000"
+            code = generate_code()
             Send_wp(p,code)
             return Response({'id':c.id,'code':code})
         else:

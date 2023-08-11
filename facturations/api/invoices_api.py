@@ -9,27 +9,43 @@ from pyfcm import FCMNotification
 from facturations.utils import generate_code,Send_wp
 import json
 
-def sendNotif():
+def send_notif_exemple():
     # Configure your Firebase Cloud Messaging server key
     api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
 
     # Initialize the FCMNotification object
     push_service = FCMNotification(api_key=api_key)
-    data_payload = {
+    test = {
     "custom_key1": "custom_value1",
     "custom_key2": "custom_value2",
     "custom_key3": "custom_value3",
     }
+    data_payload = {
+    "custom_key1": test,
+    "custom_key2": "custom_value2",
+    "custom_key3": "custom_value3",
+    }
     # Send a message to a specific device
-    registration_id = "cvuVol4uRTyjuLW8EmWwSD:APA91bF8QBJVMpz49kqog85YDH7MPHp7BqY_CEDxtU6PZIb0i3iGY0i53h21bReFa59obkQolzrxWVEf8ylkjASB6mtti0sfmPaIujSIODWAKQbK8D-icJ9Md10sRqC084jqeUXK0c8u"
+    registration_id = "cvuVol4uRTyjuLW8EmWwSD:APA91bHsb-4qab9EfQ7EEb_cg7xz-RB0iR1nCYosuOtUtfZRMIOi8MIPHxuNi9hBRWGgBOC5LIyZOVxifoRoiDhbkM2_YJNznCpp1m1vyoIX0pUIvxIaap7IXvrnjckGz6uOapqZQkoj"
     message_title = "Notification Title"
     message_body = "Notification Body"
     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
+    print(result)
+def send_notif(token,title,body,data_payload):
+    # Configure your Firebase Cloud Messaging server key
+    api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
 
+    # Initialize the FCMNotification object
+    push_service = FCMNotification(api_key=api_key)
+    # Send a message to a specific device
+    registration_id =token
+    message_title = title
+    message_body = body
+    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
     print(result)
 class Invoices(APIView):
     def get(self, request):
-        sendNotif()
+        send_notif_exemple()
         invoices = Invoice.objects.all()
         for i in invoices:
             i.invoice_product = InvoiceProduct.objects.filter(invoice = i)

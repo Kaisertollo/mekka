@@ -11,7 +11,7 @@ class CustomerAPI(APIView):
     def get(self, request):
         customers = Customer.objects.all()
         # Convert the customer data to JSON or any desired format
-        data = [{'id':customer.id,'name': customer.name, 'email': customer.email, 'address': customer.address} for customer in customers]
+        data = [{'id':customer.id,'name': customer.name, 'email': customer.email, 'address': customer.address,'token': customer.token} for customer in customers]
         return Response(data)
     def post(self, request):
         name = request.data.get('name')
@@ -44,3 +44,10 @@ class CustomerById(APIView):
         except Invoice.DoesNotExist:
             return JsonResponse({'error': 'Invoice not found'}, status=status.HTTP_404_NOT_FOUND)
 
+class CustomerTokenAPI(APIView):
+    def post(self, request):
+        token = request.data.get('token')
+        customer_id = request.data.get('id')
+        customer = Customer.objects.get(id=customer_id)
+        customer.token = token
+        return Response({'state': "success"})
