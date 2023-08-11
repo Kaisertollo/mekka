@@ -50,4 +50,5 @@ class CustomerTokenAPI(APIView):
         customer_id = request.data.get('id')
         customer = Customer.objects.get(id=customer_id)
         customer.token = token
+        customer.save()
         return Response({'state': "success"})
