@@ -65,6 +65,8 @@ class Invoices(APIView):
                 product_id=item['product']["id"],
                 quantity=item['quantity'],
             )
+        customer = invoice.customer
+        send_notif(customer.token,"Mekka facture","Vous avez reçu une nouvelle facture",{})
         invoice.invoice_product = InvoiceProduct.objects.filter(invoice = invoice)
         serializer = InvoiceSerializer(invoice)
         return JsonResponse(serializer.data, status=201)
