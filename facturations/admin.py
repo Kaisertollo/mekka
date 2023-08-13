@@ -20,8 +20,10 @@ class InvoiceAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name','price')
 
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('name','phone','email')
 
 admin.site.register(InvoiceProduct)
-admin.site.register(Customer)
 admin.site.register(Corporate)
 admin.site.register(Agent)
