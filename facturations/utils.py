@@ -44,9 +44,10 @@ def create_marchand(name,type,email,role_id,phone,cos):
 	"password": "123456"}
     headers = {
     'Authorization': f'Bearer {token}',
-    'Content-Type': 'application/json'  # You can set other headers as needed
+    'Content-Type': 'application/json' 
     }
     response = requests.post(url,json=data,headers=headers)
+    print(f"vlad {response.status_code}")
     if response.status_code == 200 or response.status_code == 201:
         return True
     else:
