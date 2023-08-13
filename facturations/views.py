@@ -6,7 +6,7 @@ from .models import *
 from .serializers import *
 import requests
 import json
-from facturations.utils import generate_code,Send_wp
+from facturations.utils import generate_code,Send_wp,create_marchand
 from django.views.decorators.csrf import csrf_exempt
 import random
 import string
@@ -29,6 +29,18 @@ class AgentAPI(APIView):
             return Response({'id':agent.id,'code': code_controle,'name':agent.name,'phone':agent.phone,'id':agent.id,'code_agent':code_agent})
         else:
             return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id",'code_agent':"code_agent"})
+class CustomerCreateMarchand(APIView):
+    def get(self, request):
+        customers = Customer.objects.all()
+        i = 0
+        for c in customers:
+            if c.marchand_created == False:
+                result = create_marchand(c.name,"customer",c.email,"3",c.phone,"7")
+                if(result):
+                    c.marchand_created = True
+                    i += 1
+        
+        return Response(i)
 
 class CustomerApiLogin(APIView):
     def post(self, request):

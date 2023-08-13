@@ -1,6 +1,5 @@
 from django.db import models
-
-
+from facturations.utils import create_marchand
 class Invoice(models.Model):
     number = models.CharField(max_length=20)
     date = models.DateField()
@@ -39,10 +38,15 @@ class Customer(models.Model):
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=50,unique=True)
     token = models.CharField(max_length=250)
+    marchand_created = models.BooleanField(default=False)
     # Add any other fields you need for the customer model
 
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        if self.marchand_created == False:
+            self.marchand_created = create_marchand(self.name,"customer",self.email,"3",self.phone,"7")
+        super(Customer, self).save(*args, **kwargs)
 
 class Corporate(models.Model):
     name = models.CharField(max_length=100)

@@ -29,5 +29,8 @@ urlpatterns = [
     path('agents', agent_api.AgentAPI.as_view(), name='agents'),
     path('agent/<int:agent_id>',agent_api.AgentById.as_view(), name='agent_by_id'),
     path('agent/check', AgentAPI.as_view(), name='agent_check_api'),
+
+
+    path('customer/marchand/create', CustomerCreateMarchand.as_view(), name='customer_marchand_create'),
     
 ]
