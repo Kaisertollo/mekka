@@ -20,6 +20,7 @@ urlpatterns = [
     path('customers', customer_api.CustomerAPI.as_view(), name='customers'),
     path('customer/<int:customer_id>',customer_api.CustomerById.as_view(), name='customer_by_id'),
     path('customers/login',CustomerApiLogin.as_view(), name='customer_api_login'),
+    path('send_customer_notification',SendCustomerNotificationApi.as_view(), name='customer_send_notification'),
     path('customer/token',customer_api.CustomerTokenAPI.as_view(), name='customer_api_token'),
 
     path('corporates', corporate_api.CorporateAPI.as_view(), name='corporates'),
