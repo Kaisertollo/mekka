@@ -68,6 +68,7 @@ class Agent(models.Model):
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=50,unique=True)
     code = models.CharField(max_length=10,unique=True)
+    token = models.CharField(max_length=250)
     # Add any other fields you need for the customer model
 
     def __str__(self):

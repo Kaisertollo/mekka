@@ -53,6 +53,17 @@ class CustomerApiLogin(APIView):
         else:
             return Response({'id':0,'code':0})
         
+class AgentApiLogin(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        agent = Agent.objects.filter(phone = p).first()
+        if agent:
+            code = generate_code()
+            Send_wp(p,code)
+            return Response({'id':agent.id,'code':code})
+        else:
+            return Response({'id':0,'code':0})
+        
 
         
 

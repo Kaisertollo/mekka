@@ -49,3 +49,12 @@ class AgentById(APIView):
             return Response({'status': 'deleted'})
         except Agent.DoesNotExist:
             return JsonResponse({'error': 'Agent not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+class AgentTokenAPI(APIView):
+    def post(self, request):
+        token = request.data.get('token')
+        agent_id = request.data.get('id')
+        agent = Agent.objects.get(id=agent_id)
+        agent.token = token
+        agent.save()
+        return Response({'state': "success"})
