@@ -53,10 +53,15 @@ class Corporate(models.Model):
     email = models.EmailField(unique=True)
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=50,unique=True)
+    marchand_created = models.BooleanField(default=False)
     # Add any other fields you need for the customer model
 
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        if self.marchand_created == False:
+            self.marchand_created = create_marchand(self.name,"corporate",self.email,"3",self.phone,"7")
+        super(Corporate, self).save(*args, **kwargs)
 class Agent(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
