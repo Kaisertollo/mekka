@@ -27,9 +27,7 @@ class Invoice(models.Model):
         total = sum([invoice_product.quantity * invoice_product.product.price for invoice_product in invoice_products])
         self.total_amount = total
         return total
-    def save(self, *args, **kwargs):
-        self.send_notif(self.customer.token,"Mekka facture","Vous avez reçu une nouvelle facture",{})
-        super(Invoice, self).save(*args, **kwargs)
+
     def __str__(self):
         return f"Invoice {self.number}"
 
