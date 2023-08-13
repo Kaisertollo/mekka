@@ -74,7 +74,7 @@ class SendCustomerNotificationApi(APIView):
             send_notif(c.token,"Mekka Money",message,{})
             return Response({'code':1})
         else:
-            return Response({'id':0,'code':0})
+            return Response({'code':0})
         
 class AgentApiLogin(APIView):
     def post(self, request):
