@@ -27,7 +27,7 @@ class CorporateSerializer(serializers.ModelSerializer):
 
 class InvoiceSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
-    Corporate = CorporateSerializer()
+    corporate = CorporateSerializer()
     invoice_product = InvoiceProductSerializer(many=True)
 
     class Meta:
