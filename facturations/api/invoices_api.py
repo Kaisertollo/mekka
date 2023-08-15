@@ -114,6 +114,7 @@ class InvoiceById(APIView):
 class InvoiceListByDate(APIView):
    def get(self, request):
         dates = Invoice.objects.values_list('date', flat=True).distinct()
+        dates.sort(reverse=True)
         list = []
         for d in dates:
             inv = Invoice.objects.all().filter(date=d)
