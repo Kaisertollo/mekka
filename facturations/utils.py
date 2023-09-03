@@ -2,10 +2,16 @@ import random
 import string
 import json
 import requests
+import bcrypt
 def generate_code():
     characters = string.digits
     code = ''.join(random.choice(characters) for _ in range(5))
     return code
+def hashPassword(password):
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'))
+    return hashed_password
+
+   
 def Send_wp(phone,code):
     url = "https://api.ultramsg.com/instance46277/messages/chat"
 

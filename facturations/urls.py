@@ -19,7 +19,9 @@ urlpatterns = [
 
     path('customers', customer_api.CustomerAPI.as_view(), name='customers'),
     path('customer/<int:customer_id>',customer_api.CustomerById.as_view(), name='customer_by_id'),
-    path('customers/login',CustomerApiLogin.as_view(), name='customer_api_login'),
+    path('customers/login',customer_api.CustomerApiLogin.as_view(), name='customer_api_login'),
+    path('customers/create_pwd',customer_api.CustomerCreatePassword.as_view(), name='customer_api_create_pwd'),
+    path('customers/login_pwd',customer_api.CustomerLoginPassword.as_view(), name='customer_api_login_pwd'),
     path('send_customer_notification',SendCustomerNotificationApi.as_view(), name='customer_send_notification'),
     path('customer/token',customer_api.CustomerTokenAPI.as_view(), name='customer_api_token'),
 

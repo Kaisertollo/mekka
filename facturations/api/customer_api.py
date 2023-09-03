@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import json
-from facturations.utils import generate_code,Send_wp
+from facturations.utils import generate_code,Send_wp,hashPassword
 
 class CustomerAPI(APIView):
     def get(self, request):
@@ -52,3 +52,40 @@ class CustomerTokenAPI(APIView):
         customer.token = token
         customer.save()
         return Response({'state': "success"})
+class CustomerApiLogin(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        c = Customer.objects.filter(phone = p).first()
+        if c:
+            if not c.first_connection_done:
+                code = generate_code()
+                Send_wp(p,code)
+                return Response({'id':c.id,'first':True,'code':code})
+            else:
+                return Response({'id':0,'first':False,'code':0})
+
+class CustomerCreatePassword(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        pwd = request.data.get('pwd')
+        c = Customer.objects.filter(phone = p).first()
+        if c:
+            c.pwd = hashPassword(pwd)
+            c.first_connection_done = True
+            c.save()
+            return Response({'id':c.id,'code':"succes"})
+        else:
+            return Response({'id':0,'code':"FAILURE"})
+class CustomerLoginPassword(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        pwd = request.data.get('pwd')
+        c = Customer.objects.filter(phone = p).first()
+        if c:
+            if c.pwd == hashPassword(pwd):
+                return Response({'id':c.id,'code':"succes"})
+            else:
+                return Response({'id':0,'code':"FAILURE"})
+        else:
+            return Response({'id':0,'code':"FAILURE"})
+
