@@ -3,6 +3,7 @@ import string
 import json
 import requests
 import bcrypt
+from twilio.rest import Client
 def generate_code():
     characters = string.digits
     code = ''.join(random.choice(characters) for _ in range(5))
@@ -11,12 +12,28 @@ def hashPassword(password):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'))
     return hashed_password
 
+def send_sms():
+    # Your Account Sid and Auth Token from twilio.com / console
+    account_sid = 'ACb75ec6ccbdd360d46bea74d24a8643e3'
+    auth_token = '0932bcc9eb2c4447552c46df4b2f2540'
+    
+    client = Client(account_sid, auth_token)
+    
+    ''' Change the value of 'from' with the number 
+    received from Twilio and the value of 'to'
+    with the number in which you want to send message.'''
+    message = client.messages.create(
+        from_='+19544176971',
+        body='test',
+        to='+221781422845')
+    
+    print(message.sid)
    
 def Send_wp(phone,code):
-    url = "https://api.ultramsg.com/instance46277/messages/chat"
+    url = "https://api.ultramsg.com/instance62646/messages/chat"
 
     payload = json.dumps({
-        "token": "ucl1zdrrlnekz30x",
+        "token": "1znsftcsye98rxxw",
         "to": phone,
         "body": f"Votre code de connexion est :{code}"
     })

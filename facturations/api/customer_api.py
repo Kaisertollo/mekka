@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import json
-from facturations.utils import generate_code,Send_wp,hashPassword
+from facturations.utils import generate_code,Send_wp,hashPassword,send_sms
 
 class CustomerAPI(APIView):
     def get(self, request):
