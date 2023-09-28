@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import json
+import bcrypt
 from facturations.utils import generate_code,Send_wp,hashPassword,send_sms
 
 class CustomerAPI(APIView):
@@ -84,7 +85,7 @@ class CustomerLoginPassword(APIView):
         pwd = request.data.get('pwd')
         c = Customer.objects.filter(phone = p).first()
         if c:
-            if c.pwd == hashPassword(pwd):
+            if c.pwd == f"b'{hashPassword(pwd).decode('utf-8')}'":
                 return Response({'id':c.id,'code':"succes"})
             else:
                 return Response({'id':0,'code':"FAILURE"})
