@@ -9,7 +9,8 @@ def generate_code():
     code = ''.join(random.choice(characters) for _ in range(5))
     return code
 def hashPassword(password):
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'))
+    salt = b'$2b$12$5QI3/OI5pV9L7BDRtKJ4tO'
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'),salt)
     return hashed_password
 
 def send_sms():

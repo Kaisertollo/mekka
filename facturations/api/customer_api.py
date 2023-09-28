@@ -62,7 +62,9 @@ class CustomerApiLogin(APIView):
                 #Send_wp(p,code)
                 return Response({'id':c.id,'first':True,'code':'00000'})
             else:
-                return Response({'id':0,'first':False,'code':0})
+                return Response({'id':c.id,'first':False,'code':0})
+        else:
+            return Response({'id':0,'first':False,'code':0})
 
 class CustomerCreatePassword(APIView):
     def post(self, request):
