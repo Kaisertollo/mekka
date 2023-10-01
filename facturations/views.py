@@ -91,10 +91,10 @@ class AgentApiLogin(APIView):
         
 
 def Send_wp(phone,code):
-    url = "https://api.ultramsg.com/instance46277/messages/chat"
+    url = "https://api.ultramsg.com/instance62646/messages/chat"
 
     payload = json.dumps({
-        "token": "ucl1zdrrlnekz30x",
+        "token": "1znsftcsye98rxxw",
         "to": phone,
         "body": f"Votre code de connexion est :{code}"
     })
@@ -103,5 +103,3 @@ def Send_wp(phone,code):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-
-    print(response.text)
