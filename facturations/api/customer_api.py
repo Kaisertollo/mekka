@@ -60,8 +60,8 @@ class CustomerApiLogin(APIView):
         if c:
             if not c.first_connection_done:
                 code = generate_code()
-                #Send_wp(p,code)
-                return Response({'id':c.id,'first':True,'code':'00000'})
+                Send_wp(p,code)
+                return Response({'id':c.id,'first':True,'code':code})
             else:
                 return Response({'id':c.id,'first':False,'code':0})
         else:
