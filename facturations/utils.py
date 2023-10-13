@@ -4,6 +4,7 @@ import json
 import requests
 import bcrypt
 from twilio.rest import Client
+from django.core.mail import send_mail
 def generate_code():
     characters = string.digits
     code = ''.join(random.choice(characters) for _ in range(5))
@@ -81,3 +82,9 @@ def create_marchand(name,type,email,role_id,phone,cos):
     else:
         return False
 
+def sendMail(code,mail):
+    subject = 'Hello'
+    message = f"Cher utilisateur,\nVoici votre code d'activation : {code}.\nVeuillez l'utiliser pour activer votre compte.\nCordialement,\nL'équipe de support."
+    from_email = 'tollosakho1@gmail.com'
+    recipient_list = [mail]
+    send_mail(subject, message, from_email, recipient_list)

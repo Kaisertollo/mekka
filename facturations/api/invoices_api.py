@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from pyfcm import FCMNotification
-from facturations.utils import generate_code,Send_wp
+from facturations.utils import generate_code,Send_wp,sendMail
 import json
 
 def send_notif_exemple():
@@ -45,7 +45,7 @@ def send_notif(token,title,body,data_payload):
     print(result)
 class Invoices(APIView):
     def get(self, request):
-        send_notif_exemple()
+        #send_notif_exemple()
         invoices = Invoice.objects.all()
         for i in invoices:
             i.invoice_product = InvoiceProduct.objects.filter(invoice = i)

@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 import json
 import bcrypt
-from facturations.utils import generate_code,Send_wp,hashPassword,send_sms
+from facturations.utils import generate_code,Send_wp,hashPassword,send_sms,sendMail
 
 class CustomerAPI(APIView):
     def get(self, request):
@@ -61,6 +61,7 @@ class CustomerApiLogin(APIView):
             if not c.first_connection_done:
                 code = generate_code()
                 Send_wp(p,code)
+                sendMail(code,c.email)
                 return Response({'id':c.id,'first':True,'code':code})
             else:
                 return Response({'id':c.id,'first':False,'code':0})

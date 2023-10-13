@@ -88,3 +88,7 @@ class Agent(models.Model):
 
     def __str__(self):
         return self.name
+    def save(self, *args, **kwargs):
+        if self.marchand_created == False:
+            self.marchand_created = create_marchand(self.name,"agent",self.email,"2",self.phone,"4")
+        super(Corporate, self).save(*args, **kwargs)
