@@ -92,4 +92,4 @@ class Agent(models.Model):
     def save(self, *args, **kwargs):
         if self.marchand_created == False:
             self.marchand_created = create_marchand(self.name,"agent",self.email,"2",self.phone,"4")
-        super(Corporate, self).save(*args, **kwargs)
+        super(Agent, self).save(*args, **kwargs)
