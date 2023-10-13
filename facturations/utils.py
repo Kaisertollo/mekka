@@ -72,10 +72,10 @@ def create_marchand(name,type,email,role_id,phone,cos):
     }
     response = requests.post(url,json=data,headers=headers)
     print(f"vlad {response.status_code}")
-    file = open("error.txt", "a")
+    """ file = open("error.txt", "a")
     file.write(f"vlad {response.status_code}")
     file.write('\n')
-    file.close()
+    file.close() """
     if response.status_code == 200 or response.status_code == 201:
         return True
     else:
