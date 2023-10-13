@@ -84,6 +84,7 @@ class Agent(models.Model):
     phone = models.CharField(max_length=50,unique=True)
     code = models.CharField(max_length=10,unique=True)
     token = models.CharField(max_length=250)
+    marchand_created = models.BooleanField(default=False)
     # Add any other fields you need for the customer model
 
     def __str__(self):
