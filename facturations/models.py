@@ -1,5 +1,5 @@
 from django.db import models
-from facturations.utils import create_marchand
+from facturations.utils import create_marchand,send_notif
 from pyfcm import FCMNotification
 class Invoice(models.Model):
     number = models.CharField(max_length=20)
@@ -27,7 +27,10 @@ class Invoice(models.Model):
         total = sum([invoice_product.quantity * invoice_product.product.price for invoice_product in invoice_products])
         self.total_amount = total
         return total
-
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            send_notif(self.customer.token,"Mekka facture","Vous avez reçu une nouvelle facture",{})
+        super(Invoice, self).save(*args, **kwargs)
     def __str__(self):
         return f"Invoice {self.number}"
 
@@ -86,7 +89,6 @@ class Agent(models.Model):
     token = models.CharField(max_length=250)
     marchand_created = models.BooleanField(default=False)
     # Add any other fields you need for the customer model
-
     def __str__(self):
         return self.name
     def save(self, *args, **kwargs):

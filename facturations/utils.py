@@ -4,6 +4,7 @@ import json
 import requests
 import bcrypt
 from twilio.rest import Client
+from pyfcm import FCMNotification
 from django.core.mail import send_mail
 def generate_code():
     characters = string.digits
@@ -88,3 +89,16 @@ def sendMail(code,mail):
     from_email = 'tollosakho1@gmail.com'
     recipient_list = [mail]
     send_mail(subject, message, from_email, recipient_list)
+
+def send_notif(token,title,body,data_payload):
+    # Configure your Firebase Cloud Messaging server key
+    api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
+
+    # Initialize the FCMNotification object
+    push_service = FCMNotification(api_key=api_key)
+    # Send a message to a specific device
+    registration_id =token
+    message_title = title
+    message_body = body
+    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
+    print(result)
