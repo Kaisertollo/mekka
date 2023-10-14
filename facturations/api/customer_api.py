@@ -62,9 +62,9 @@ class CustomerApiLogin(APIView):
                 code = generate_code()
                 Send_wp(p,code)
                 sendMail(code,c.email)
-                return Response({'id':c.id,'first':True,'code':code})
+                return Response({'id':c.id,'first':c.first_connection_done,'code':code})
             else:
-                return Response({'id':c.id,'first':False,'code':0})
+                return Response({'id':c.id,'first':c.first_connection_done,'code':0})
         else:
             return Response({'id':0,'first':False,'code':0})
 

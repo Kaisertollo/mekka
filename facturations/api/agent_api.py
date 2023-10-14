@@ -67,9 +67,9 @@ class AgentApiLogin(APIView):
                 code = generate_code()
                 Send_wp(p,code)
                 sendMail(code,a.email)
-                return Response({'id':a.id,'first':True,'code':code})
+                return Response({'id':a.id,'first':a.first_connection_done,'code':code})
             else:
-                return Response({'id':a.id,'first':False,'code':0})
+                return Response({'id':a.id,'first':a.first_connection_done,'code':0})
         else:
             return Response({'id':0,'first':False,'code':0})
 
