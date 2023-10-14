@@ -32,10 +32,12 @@ urlpatterns = [
     path('agents', agent_api.AgentAPI.as_view(), name='agents'),
     path('agent/<int:agent_id>',agent_api.AgentById.as_view(), name='agent_by_id'),
     path('agent/check', AgentAPI.as_view(), name='agent_check_api'),
-
+    path('agent/login',agent_api.AgentApiLogin.as_view(), name='agent_api_login'),
+    path('agent/token',agent_api.AgentTokenAPI.as_view(), name='agent_api_token'),
+    path('agent/create_pwd',agent_api.AgentCreatePassword.as_view(), name='agent_api_create_pwd'),
+    path('agent/login_pwd',agent_api.AgentLoginPassword.as_view(), name='agent_api_login_pwd'),
 
     path('customer/marchand/create', CustomerCreateMarchand.as_view(), name='customer_marchand_create'),
-    path('agent/login',AgentApiLogin.as_view(), name='agent_api_login'),
-    path('agent/token',agent_api.AgentTokenAPI.as_view(), name='agent_api_token'),
+  
     
 ]

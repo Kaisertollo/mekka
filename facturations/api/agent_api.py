@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from facturations.utils import generate_code,Send_wp
+from facturations.utils import generate_code,Send_wp,sendMail,hashPassword
 import json
 
 class AgentAPI(APIView):
@@ -58,3 +58,42 @@ class AgentTokenAPI(APIView):
         agent.token = token
         agent.save()
         return Response({'state': "success"})
+class AgentApiLogin(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        a = Agent.objects.filter(phone = p).first()
+        if a:
+            if not a.first_connection_done:
+                code = generate_code()
+                Send_wp(p,code)
+                sendMail(code,a.email)
+                return Response({'id':a.id,'first':True,'code':code})
+            else:
+                return Response({'id':a.id,'first':False,'code':0})
+        else:
+            return Response({'id':0,'first':False,'code':0})
+
+class AgentCreatePassword(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        pwd = request.data.get('pwd')
+        a = Agent.objects.filter(phone = p).first()
+        if a:
+            a.pwd = hashPassword(pwd)
+            a.first_connection_done = True
+            a.save()
+            return Response({'id':a.id,'code':"succes"})
+        else:
+            return Response({'id':0,'code':"FAILURE"})
+class AgentLoginPassword(APIView):
+    def post(self, request):
+        p = request.data.get('phone')
+        pwd = request.data.get('pwd')
+        a = Agent.objects.filter(phone = p).first()
+        if a:
+            if a.pwd == f"b'{hashPassword(pwd).decode('utf-8')}'":
+                return Response({'id':a.id,'code':"succes"})
+            else:
+                return Response({'id':0,'code':"FAILURE"})
+        else:
+            return Response({'id':0,'code':"FAILURE"})
