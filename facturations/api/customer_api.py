@@ -12,7 +12,7 @@ class CustomerAPI(APIView):
     def get(self, request):
         customers = Customer.objects.all()
         # Convert the customer data to JSON or any desired format
-        data = [{'id':customer.id,'name': customer.name, 'email': customer.email, 'address': customer.address,'token': customer.token} for customer in customers]
+        data = [{'id':customer.id,'name': customer.name, 'phone': customer.phone,'email': customer.email, 'address': customer.address,'token': customer.token} for customer in customers]
         return Response(data)
     def post(self, request):
         name = request.data.get('name')
