@@ -6,7 +6,7 @@ from .models import *
 from .serializers import *
 import requests
 import json
-from facturations.utils import generate_code,Send_wp,create_marchand
+from facturations.utils import generate_code,Send_wp,create_marchand,send_notif
 from django.views.decorators.csrf import csrf_exempt
 import random
 import string
@@ -39,6 +39,7 @@ class AgentAPI(APIView):
         if agent:
             code_controle = generate_code()
             Send_wp(agent.phone,code_controle)
+            send_notif(agent.token,"Code Paiement",f"Code pour valider Paiement {code_controle} ",{})
             return Response({'id':agent.id,'code': code_controle,'name':agent.name,'phone':agent.phone,'id':agent.id,'code_agent':code_agent})
         else:
             return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id",'code_agent':"code_agent"})
