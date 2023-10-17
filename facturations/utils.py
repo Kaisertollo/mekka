@@ -5,11 +5,24 @@ import requests
 import bcrypt
 from twilio.rest import Client
 from pyfcm import FCMNotification
+from django.http import HttpResponse
 from django.core.mail import send_mail
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 def generate_code():
     characters = string.digits
     code = ''.join(random.choice(characters) for _ in range(5))
     return code
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    response = HttpResponse(content_type='application/pdf')
+    pdf_status = pisa.CreatePDF(html, dest=response)
+
+    if pdf_status.err:
+        return HttpResponse('Nous avons rencontré des erreurs <pre>' + html + '</pre>')
+
+    return response
 def hashPassword(password):
     salt = b'$2b$12$5QI3/OI5pV9L7BDRtKJ4tO'
     hashed_password = bcrypt.hashpw(password.encode('utf-8'),salt)

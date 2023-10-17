@@ -1,0 +1,379 @@
+commit 42d105f4bb8bc2125af1735ffae5b880c80d21cc
+Author: kurt93 <russellloko@gmail.com>
+Date:   Wed Sep 27 10:58:40 2023 +0000
+
+    Ajout du rapport PDF et des demandes faites par Daniel Elhom
+    
+    Rapport PDF des factures
+    Ajout de l'heure au model Invoice
+    Récupération des informations du user connecté
+
+diff --git a/facturations/api/corporate_api.py b/facturations/api/corporate_api.py
+index b7c28eb..62ea30e 100644
+--- a/facturations/api/corporate_api.py
++++ b/facturations/api/corporate_api.py
+@@ -54,6 +54,7 @@ class CorporateApiLogin(APIView):
+         if c:
+             code = "0000"
+             Send_wp(p,code)
+-            return Response({'id':c.id,'code': code,'name':c.name,'phone':c.phone,'id':c.id})
++            return Response({'id':c.id,'code': code,'name':c.name,'phone':c.phone,'address':c.address
++                             ,'email':c.email,'id':c.id,})
+         else:
+             return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id"})
+diff --git a/facturations/api/customer_api.py b/facturations/api/customer_api.py
+index d15d145..e0edafa 100644
+--- a/facturations/api/customer_api.py
++++ b/facturations/api/customer_api.py
+@@ -19,11 +19,13 @@ class CustomerAPI(APIView):
+         address = request.data.get('address')
+         customer = Customer.objects.create(name=name, email=email, address=address)
+         return Response({'id': customer.id, 'name': customer.name, 'email': customer.email,'address': customer.address})
++    
+ class CustomerById(APIView):
+     def get(self, request,customer_id):
+         customer = Customer.objects.get(id = customer_id)
+         data = {'id':customer.id,'name': customer.name, 'email': customer.email, 'address': customer.address}
+         return Response(data)
++    
+     def put(self, request, customer_id):
+         try:
+             customer = Customer.objects.get(id=customer_id)
+@@ -36,6 +38,7 @@ class CustomerById(APIView):
+         customer.address = request.data.get('address')
+         customer.save()
+         return Response(customer)
++    
+     def delete(self, request, customer_id):
+         try:
+             customer = Customer.objects.get(id=customer_id)
+diff --git a/facturations/api/invoices_api.py b/facturations/api/invoices_api.py
+index df66777..6ee439d 100644
+--- a/facturations/api/invoices_api.py
++++ b/facturations/api/invoices_api.py
+@@ -31,6 +31,7 @@ def send_notif_exemple():
+     message_body = "Notification Body"
+     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
+     print(result)
++
+ def send_notif(token,title,body,data_payload):
+     # Configure your Firebase Cloud Messaging server key
+     api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
+@@ -43,6 +44,7 @@ def send_notif(token,title,body,data_payload):
+     message_body = body
+     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
+     print(result)
++
+ class Invoices(APIView):
+     def get(self, request):
+         send_notif_exemple()
+@@ -52,6 +54,7 @@ class Invoices(APIView):
+             i.calculate_total_amount()
+         serializer = InvoiceSerializer(invoices, many=True)
+         return JsonResponse(serializer.data, safe=False)
++    
+     def post(self,request):
+         data = request.data
+         invoice = Invoice.objects.create(
+@@ -70,6 +73,7 @@ class Invoices(APIView):
+         invoice.invoice_product = InvoiceProduct.objects.filter(invoice = invoice)
+         serializer = InvoiceSerializer(invoice)
+         return JsonResponse(serializer.data, status=201)
++
+ class InvoiceById(APIView):
+     def get(self, request,invoice_id):
+         invoice = Invoice.objects.get(id = invoice_id)
+@@ -140,6 +144,7 @@ class InvoiceListView_by_customer(DetailView):
+             i.calculate_total_amount()
+         serializer = InvoiceSerializer(invoices, many=True)
+         return JsonResponse(serializer.data, safe=False)
++    
+ class InvoicePayAPI(APIView):
+     def post(self, request):
+         id_agent = request.data.get('id')
+diff --git a/facturations/models.py b/facturations/models.py
+index bd7aab1..cf2195f 100644
+--- a/facturations/models.py
++++ b/facturations/models.py
+@@ -1,15 +1,19 @@
+ from django.db import models
+ from facturations.utils import create_marchand
+ from pyfcm import FCMNotification
++
++
+ class Invoice(models.Model):
+     number = models.CharField(max_length=20)
+     date = models.DateField()
++    hour = models.TimeField(auto_now=False, auto_now_add=False, null=True)
+     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+     agent = models.ForeignKey('Agent', on_delete=models.CASCADE,null=True,blank=True)
+     corporate = models.ForeignKey('Corporate', on_delete=models.CASCADE,null=True)
+     payed = models.BooleanField(default=False)
+     total_amount = 0
+     invoice_product = list()
++    
+     def send_notif(token,title,body,data_payload):
+     # Configure your Firebase Cloud Messaging server key
+         api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
+@@ -22,6 +26,7 @@ class Invoice(models.Model):
+         message_body = body
+         result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
+         print(result)
++    
+     def calculate_total_amount(self):
+         invoice_products = InvoiceProduct.objects.filter(invoice=self)
+         total = sum([invoice_product.quantity * invoice_product.product.price for invoice_product in invoice_products])
+@@ -43,8 +48,11 @@ class InvoiceProduct(models.Model):
+     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+     quantity = models.PositiveIntegerField()
++    
+     def __str__(self):
+         return f"{self.product} - Quantity: {self.quantity}"
++
++
+ class Customer(models.Model):
+     name = models.CharField(max_length=100)
+     email = models.EmailField()
+@@ -61,6 +69,7 @@ class Customer(models.Model):
+             self.marchand_created = create_marchand(self.name,"customer",self.email,"3",self.phone,"7")
+         super(Customer, self).save(*args, **kwargs)
+ 
++
+ class Corporate(models.Model):
+     name = models.CharField(max_length=100)
+     email = models.EmailField(unique=True)
+@@ -71,10 +80,13 @@ class Corporate(models.Model):
+ 
+     def __str__(self):
+         return self.name
++    
+     def save(self, *args, **kwargs):
+         if self.marchand_created == False:
+             self.marchand_created = create_marchand(self.name,"corporate",self.email,"3",self.phone,"7")
+         super(Corporate, self).save(*args, **kwargs)
++
++
+ class Agent(models.Model):
+     name = models.CharField(max_length=100)
+     email = models.EmailField(unique=True)
+diff --git a/facturations/templates/facturations/pdf.html b/facturations/templates/facturations/pdf.html
+new file mode 100644
+index 0000000..e140f44
+--- /dev/null
++++ b/facturations/templates/facturations/pdf.html
+@@ -0,0 +1,77 @@
++<html>
++    <head>
++        <style>
++
++            @page {
++                size: A4 landscape;
++                margin: 1cm;
++            }
++    
++
++            * {
++                font-size: 15px;
++            }
++
++            table {
++                table-layout: fixed;
++                width: 100%;
++                border: 1px solid black;
++            }
++
++            table th {
++                text-align: left;
++                padding: 3px;
++                padding-bottom: 0;
++            }
++
++            table td {
++                white-space: nowrap;
++                overflow: hidden;
++                text-overflow: ellipsis;
++                padding: 3px;
++                padding-bottom: 0;
++            }
++        </style>
++    </head>
++
++    <body>
++
++        <div class="card">
++            <div class="card-header">
++                <h3>Rapport des paiements</h3>
++            </div>
++    
++        <h1>Paiements</h1>
++        </div>
++        <table>
++            <tr>
++                <th> No </th>
++                <th> Date </th>
++                <th> Heure </th>
++                <th> Centre </th>
++                <th> Statut </th>
++                <th> Quantité </th>
++                <th> Commune </th>
++                <th> Montant collecté </th>
++                <th> Débité </th>
++                <th> Crédité (Solde) </th>
++                <th> #ID </th>
++            </tr>
++            {%for data in record%}
++            <tr>
++                <td style="width: 10%;"> {{forloop.counter}} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.date}} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.hour}} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.corporate}} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.payed }} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.quantity}} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.corporate.address}} </td>
++                <td sttyle="width: 10%; text-align: left;"> {{data.product.price}} </td>
++                <td style="width: 10%; text-align: left;">  </td>
++                <td style="width: 10%; text-align: left;">  </td>
++                <td style="width: 10%; text-align: left;"> {{data.id}} </td>
++            </tr>
++            {%endfor%}
++        </table>
++    </body>
++</html>
+\ No newline at end of file
+diff --git a/facturations/urls.py b/facturations/urls.py
+index fc17c51..00a3205 100644
+--- a/facturations/urls.py
++++ b/facturations/urls.py
+@@ -35,5 +35,6 @@ urlpatterns = [
+     path('customer/marchand/create', CustomerCreateMarchand.as_view(), name='customer_marchand_create'),
+     path('agent/login',AgentApiLogin.as_view(), name='agent_api_login'),
+     path('agent/token',agent_api.AgentTokenAPI.as_view(), name='agent_api_token'),
++    path("invoice_report/", InvoiceList, name="invoice_report"),
+     
+ ]
+diff --git a/facturations/utils.py b/facturations/utils.py
+index 5b95214..f449802 100644
+--- a/facturations/utils.py
++++ b/facturations/utils.py
+@@ -2,10 +2,27 @@ import random
+ import string
+ import json
+ import requests
++from django.http import HttpResponse
++from django.template.loader import get_template
++from xhtml2pdf import pisa
++
++
+ def generate_code():
+     characters = string.digits
+     code = ''.join(random.choice(characters) for _ in range(5))
+     return code
++
++def render_to_pdf(template_src, context_dict={}):
++    template = get_template(template_src)
++    html = template.render(context_dict)
++    response = HttpResponse(content_type='application/pdf')
++    pdf_status = pisa.CreatePDF(html, dest=response)
++
++    if pdf_status.err:
++        return HttpResponse('Nous avons rencontré des erreurs <pre>' + html + '</pre>')
++
++    return response
++
+ def Send_wp(phone,code):
+     url = "https://api.ultramsg.com/instance46277/messages/chat"
+ 
+@@ -21,6 +38,8 @@ def Send_wp(phone,code):
+     response = requests.request("POST", url, headers=headers, data=payload)
+ 
+     print(response.text)
++
++
+ def create_marchand(name,type,email,role_id,phone,cos):
+     url = "http://payment.mekka-africa.com/api/v1/creation-compte-marchand"
+     token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYTg3MTI3NzNkYzRjNzE4YjNkNGZiMWViMDA5OWJkN2ViNTA0NjQ1MzkxNDAxYjNkMjM0MzA1MzljMWI3MmNmOWYzMDJkNGMyNDZhZTU5MmIiLCJpYXQiOjE2OTE2MjAyMDkuOTcxOTk3LCJuYmYiOjE2OTE2MjAyMDkuOTcyMDAyLCJleHAiOjE3MjMyNDI2MDkuOTYzNDg3LCJzdWIiOiI0Iiwic2NvcGVzIjpbXX0.RBpaGn6l6eZxrVc0tiFak-fsZKQjxE5NGtIfM4QydB9R7YNKuH0-ypEAAxYh82A5sav9yWmhX5Fa4ha_ieQ0SbuidOARQVDtc3D7AXptJX_go36Virz5ehaz39aWTf5i9dQqdgypprLya8DGPGhX92fuJQFrDdF_1S2-9U0VuxbLoSLIgBgJxsEDUaEdIwx5SzsOGMcClaG_cjhp-lpSKolQZ6VbYKWt77H4orOznF8ebzkzrK7QfU4f9MiruQNlJvBvlkIXESLqRfgRI3739jmqAMgmWrGWNIWarcrMsW6ymhD9cnaz-PeMVG084zXr3Umn5xobgIe0gTFd3bsQU09sq_QgHqW27pvwsd21jTMfLNyltC4l3NbE2BiRWNDwJhLDVeRXACSasLe00xQ1BWDlAQQUi92v565XdZIt60VOZmUc4Qe9Q-qz6Dcmo6seSbWm84DH9n-e3D0EiAt7RTNhUSFMOrJ4EJJWwtorWLiTvKw7tbogKtJuL0_TBf_lIfiY-Td-N9byodQX-lhI5M05m-_cnUw7vOxvVSrRI5ZElrWBb3jiAEGC5Bhl8fr0KBt0L5z2-Mre4U1QJrg6MKcDT4enOHqgSDRTZBOhAXxvvtUDSKGtmFt9u84LmU-b__AKvP2NImklk_J164nP-VuVMv5OCmGEJmChZF46l6Q"
+diff --git a/facturations/views.py b/facturations/views.py
+index 9d2b850..bebe2f6 100644
+--- a/facturations/views.py
++++ b/facturations/views.py
+@@ -1,3 +1,4 @@
++from datetime import timezone
+ from django.http import JsonResponse
+ from rest_framework.response import Response
+ from rest_framework.views import APIView
+@@ -12,7 +13,18 @@ import random
+ import string
+ from pyfcm import FCMNotification
+ import facturations.api.invoices_api as invoice_api
++from facturations.utils import render_to_pdf
+ 
++def InvoiceList(request):
++    template_name = "facturations/pdf.html"
++    records = InvoiceProduct.objects.all().order_by("product")
++
++    return render_to_pdf(
++        template_name,
++        {
++            "record": records,
++        },
++    )
+ 
+ def send_notif(token,title,body,data_payload):
+     # Configure your Firebase Cloud Messaging server key
+@@ -26,6 +38,8 @@ def send_notif(token,title,body,data_payload):
+     message_body = body
+     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
+     print(result)
++
++
+ class AgentAPI(APIView):
+     def get(self, request):
+         agents = Agent.objects.all()
+@@ -42,6 +56,8 @@ class AgentAPI(APIView):
+             return Response({'id':agent.id,'code': code_controle,'name':agent.name,'phone':agent.phone,'id':agent.id,'code_agent':code_agent})
+         else:
+             return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id",'code_agent':"code_agent"})
++
++
+ class CustomerCreateMarchand(APIView):
+     def get(self, request):
+         customers = Customer.objects.all()
+@@ -55,6 +71,7 @@ class CustomerCreateMarchand(APIView):
+         
+         return Response(i)
+ 
++
+ class CustomerApiLogin(APIView):
+     def post(self, request):
+         p = request.data.get('phone')
+@@ -65,6 +82,8 @@ class CustomerApiLogin(APIView):
+             return Response({'id':c.id,'code':code})
+         else:
+             return Response({'id':0,'code':0})
++
++
+ class SendCustomerNotificationApi(APIView):
+     def post(self, request):
+         p = request.data.get('phone')
+@@ -76,6 +95,7 @@ class SendCustomerNotificationApi(APIView):
+         else:
+             return Response({'code':0})
+         
++
+ class AgentApiLogin(APIView):
+     def post(self, request):
+         p = request.data.get('phone')
+diff --git a/mekka/settings.py b/mekka/settings.py
+index fbbdff3..6db6630 100644
+--- a/mekka/settings.py
++++ b/mekka/settings.py
+@@ -62,7 +62,7 @@ ROOT_URLCONF = 'mekka.urls'
+ TEMPLATES = [
+     {
+         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+-        'DIRS': [],
++        'DIRS': ['templates'],
+         'APP_DIRS': True,
+         'OPTIONS': {
+             'context_processors': [

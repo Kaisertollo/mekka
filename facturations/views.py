@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from datetime import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.views.generic import ListView, DetailView, View
@@ -12,6 +13,18 @@ import random
 import string
 from pyfcm import FCMNotification
 import facturations.api.invoices_api as invoice_api
+from facturations.utils import render_to_pdf
+
+def InvoiceList(request):
+    template_name = "facturations/pdf.html"
+    records = InvoiceProduct.objects.all().order_by("product")
+
+    return render_to_pdf(
+        template_name,
+        {
+            "record": records,
+        },
+    )
 
 
 def send_notif(token,title,body,data_payload):

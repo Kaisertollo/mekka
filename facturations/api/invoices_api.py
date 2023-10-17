@@ -31,6 +31,7 @@ def send_notif_exemple():
     message_body = "Notification Body"
     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
     print(result)
+
 def send_notif(token,title,body,data_payload):
     # Configure your Firebase Cloud Messaging server key
     api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
@@ -43,6 +44,7 @@ def send_notif(token,title,body,data_payload):
     message_body = body
     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
     print(result)
+    
 class Invoices(APIView):
     def get(self, request):
         #send_notif_exemple()

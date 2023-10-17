@@ -14,6 +14,7 @@ class CustomerAPI(APIView):
         # Convert the customer data to JSON or any desired format
         data = [{'id':customer.id,'name': customer.name, 'phone': customer.phone,'email': customer.email, 'address': customer.address,'token': customer.token} for customer in customers]
         return Response(data)
+    
     def post(self, request):
         name = request.data.get('name')
         email = request.data.get('email')
@@ -25,6 +26,7 @@ class CustomerById(APIView):
         customer = Customer.objects.get(id = customer_id)
         data = {'id':customer.id,'name': customer.name, 'email': customer.email, 'address': customer.address}
         return Response(data)
+    
     def put(self, request, customer_id):
         try:
             customer = Customer.objects.get(id=customer_id)
@@ -37,6 +39,7 @@ class CustomerById(APIView):
         customer.address = request.data.get('address')
         customer.save()
         return Response(customer)
+    
     def delete(self, request, customer_id):
         try:
             customer = Customer.objects.get(id=customer_id)

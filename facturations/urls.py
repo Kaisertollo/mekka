@@ -36,6 +36,7 @@ urlpatterns = [
     path('agent/token',agent_api.AgentTokenAPI.as_view(), name='agent_api_token'),
     path('agent/create_pwd',agent_api.AgentCreatePassword.as_view(), name='agent_api_create_pwd'),
     path('agent/login_pwd',agent_api.AgentLoginPassword.as_view(), name='agent_api_login_pwd'),
+    path("invoice_report/", InvoiceList, name="invoice_report"),
 
     path('customer/marchand/create', CustomerCreateMarchand.as_view(), name='customer_marchand_create'),
   

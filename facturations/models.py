@@ -4,12 +4,14 @@ from pyfcm import FCMNotification
 class Invoice(models.Model):
     number = models.CharField(max_length=20)
     date = models.DateField()
+    hour = models.TimeField(auto_now=False, auto_now_add=False, null=True)
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
     agent = models.ForeignKey('Agent', on_delete=models.CASCADE,null=True,blank=True)
     corporate = models.ForeignKey('Corporate', on_delete=models.CASCADE,null=True)
     payed = models.BooleanField(default=False)
     total_amount = 0
     invoice_product = list()
+    
     def send_notif(token,title,body,data_payload):
     # Configure your Firebase Cloud Messaging server key
         api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
@@ -22,11 +24,13 @@ class Invoice(models.Model):
         message_body = body
         result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body,data_message=data_payload)
         print(result)
+
     def calculate_total_amount(self):
         invoice_products = InvoiceProduct.objects.filter(invoice=self)
         total = sum([invoice_product.quantity * invoice_product.product.price for invoice_product in invoice_products])
         self.total_amount = total
         return total
+    
     def save(self, *args, **kwargs):
         if self._state.adding:
             send_notif(self.customer.token,"Mekka facture","Vous avez reçu une nouvelle facture",{})

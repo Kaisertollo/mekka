@@ -54,6 +54,6 @@ class CorporateApiLogin(APIView):
         if c:
             code = "0000"
             Send_wp(p,code)
-            return Response({'id':c.id,'code': code,'name':c.name,'phone':c.phone,'id':c.id})
+            return Response({'id':c.id,'code': code,'name':c.name,'phone':c.phone,'address':c.address,'email':c.email,'id':c.id,})
         else:
             return Response({'id':0,'code': "0",'name':"agent.name",'phone':"agent.phone",'id':"agent.id"})

@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <style>
+
+            @page {
+                size: A4 landscape;
+                margin: 1cm;
+            }
+    
+
+            * {
+                font-size: 15px;
+            }
+
+            table {
+                table-layout: fixed;
+                width: 100%;
+                border: 1px solid black;
+            }
+
+            table th {
+                text-align: left;
+                padding: 3px;
+                padding-bottom: 0;
+            }
+
+            table td {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                padding: 3px;
+                padding-bottom: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Rapport des paiements</h3>
+            </div>
+    
+        <h1>Paiements</h1>
+        </div>
+        <table>
+            <tr>
+                <th> No </th>
+                <th> Date </th>
+                <th> Heure </th>
+                <th> Centre </th>
+                <th> Statut </th>
+                <th> Quantité </th>
+                <th> Commune </th>
+                <th> Montant collecté </th>
+                <th> Débité </th>
+                <th> Crédité (Solde) </th>
+                <th> #ID </th>
+            </tr>
+            {%for data in record%}
+            <tr>
+                <td style="width: 10%;"> {{forloop.counter}} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.date}} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.hour}} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.corporate}} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.payed }} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.quantity}} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.invoice.corporate.address}} </td>
+                <td sttyle="width: 10%; text-align: left;"> {{data.product.price}} </td>
+                <td style="width: 10%; text-align: left;">  </td>
+                <td style="width: 10%; text-align: left;">  </td>
+                <td style="width: 10%; text-align: left;"> {{data.id}} </td>
+            </tr>
+            {%endfor%}
+        </table>
+    </body>
+</html>
