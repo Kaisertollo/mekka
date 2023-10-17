@@ -17,6 +17,7 @@ import facturations.api.invoices_api as invoice_api
 def send_notif(token,title,body,data_payload):
     # Configure your Firebase Cloud Messaging server key
     api_key = "AAAA0IjcuIQ:APA91bE75plgpm8K-9bzimA1GUY-fx7lu1AJwhaoJPW_5EOKAD6djPw-l1BTUHGrbMPdf7R_MH2VNYg0Trpbc9ZzYSnkxZSnMo44MHfagRjvOoqtNk12Ec8jFI570Fofht4CIEMEjCAh"
+    
 
     # Initialize the FCMNotification object
     push_service = FCMNotification(api_key=api_key)
